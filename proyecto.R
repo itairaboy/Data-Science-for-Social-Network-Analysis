@@ -26,6 +26,7 @@ setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
 
 # Data --------------------------------------------------------------------
 
+# Cargar tweets antiguos para unirlos a tweets nuevos
 # Past tweets
 files <- list.files(path = "data", pattern = "\\.csv$", full.names = TRUE)
 
@@ -38,16 +39,16 @@ past_tweets <- map_df(files,
                         replyToSN = col_character(),
                         created = col_datetime(format = ""),
                         truncated = col_logical(),
-                        replyToSID = col_double(),
-                        id = col_double(),
-                        replyToUID = col_double(),
+                        replyToSID = col_character(),
+                        id = col_character(),
+                        replyToUID = col_character(),
                         statusSource = col_character(),
                         screenName = col_character(),
                         retweetCount = col_double(),
                         isRetweet = col_logical(),
                         retweeted = col_logical(),
-                        longitude = col_double(),
-                        latitude = col_double()
+                        longitude = col_character(),
+                        latitude = col_character()
                       ))
 
 # Obtener tweets de COVID-19 de hoy
@@ -60,7 +61,7 @@ tweets <-
 # Convertir en DF
 present_tweets <- twListToDF(tweets)
 
-# Guardar nuevos tweets
+# Guardar nuevos tweets como .csv
 present_tweets %>% 
   write_csv(paste0("data/", str_remove_all(today(), "-"), "_covid19.csv"),
             na = "")
