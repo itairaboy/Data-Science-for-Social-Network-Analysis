@@ -13,6 +13,7 @@ library(twitteR)
 library(rgexf)
 library(tidyverse)
 library(graphTweets)
+library(lubridate)
 
 # Twitter oauth
 api_key <- "TOshp3u6mh579Sc0vSRDjaH8C"
@@ -25,7 +26,31 @@ setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
 
 # Data --------------------------------------------------------------------
 
-# Obtener tweets de COVID-19
+# Past tweets
+files <- list.files(path = "data", pattern = "\\.csv$", full.names = TRUE)
+
+past_tweets <- map_df(files,
+                      read_csv,
+                      col_types = cols(
+                        text = col_character(),
+                        favorited = col_logical(),
+                        favoriteCount = col_double(),
+                        replyToSN = col_character(),
+                        created = col_datetime(format = ""),
+                        truncated = col_logical(),
+                        replyToSID = col_double(),
+                        id = col_double(),
+                        replyToUID = col_double(),
+                        statusSource = col_character(),
+                        screenName = col_character(),
+                        retweetCount = col_double(),
+                        isRetweet = col_logical(),
+                        retweeted = col_logical(),
+                        longitude = col_double(),
+                        latitude = col_double()
+                      ))
+
+# Obtener tweets de COVID-19 de hoy
 tweets <-
   searchTwitter("#Covid-19",
                 n = 3000,
@@ -33,7 +58,15 @@ tweets <-
                 geocode = "-33.4569397,-70.6482697,22km")
 
 # Convertir en DF
-tw_df <- twListToDF(tweets)
+present_tweets <- twListToDF(tweets)
+
+# Guardar nuevos tweets
+present_tweets %>% 
+  write_csv(paste0("data/", str_remove_all(today(), "-"), "_covid19.csv"),
+            na = "")
+
+# Join past y present tweets
+tw_df <- full_join(past_tweets, present_tweets)
 
 # Cada tweet es una arista, dirigida quien es el RT ej: @user #Covid-19
 edges <-
@@ -65,3 +98,4 @@ graph <- graph.data.frame(edges[, 1:2], directed = TRUE, vertices = nodes)
 
 # Guardar grafo
 write.graph(graph, "entrega1.graphml", format = "graphml")
+
