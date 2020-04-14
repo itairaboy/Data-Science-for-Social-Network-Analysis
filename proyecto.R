@@ -30,7 +30,7 @@ tweets <-
   searchTwitter("#Covid-19",
                 n = 3000,
                 lang = "es",
-                geocode = "-33.393043,-70.579348,19km")
+                geocode = "-33.4569397,-70.6482697,22km")
 
 # Convertir en DF
 tw_df <- twListToDF(tweets)
