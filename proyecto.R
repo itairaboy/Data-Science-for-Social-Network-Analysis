@@ -35,18 +35,6 @@ tweets <-
 # Convertir en DF
 tw_df <- twListToDF(tweets)
 
-# Cada user es un nodo
-nodes <-
-  getNodes(
-    edges,
-    source = "source",
-    target = "target",
-    "favorited",
-    "retweetCount",
-    "longitude",
-    "latitude"
-  )
-
 # Cada tweet es una arista, dirigida quien es el RT ej: @user #Covid-19
 edges <-
   getEdges(
@@ -60,8 +48,20 @@ edges <-
     "latitude"
   )
 
+# Cada user es un nodo
+nodes <-
+  getNodes(
+    edges,
+    source = "source",
+    target = "target",
+    "favorited",
+    "retweetCount",
+    "longitude",
+    "latitude"
+  )
+
 # Crear grafo
 graph <- graph.data.frame(edges[, 1:2], directed = TRUE, vertices = nodes)
 
 # Guardar grafo
-write.graph(graph, "test2.graphml", format = "graphml")
+write.graph(graph, "entrega1.graphml", format = "graphml")
