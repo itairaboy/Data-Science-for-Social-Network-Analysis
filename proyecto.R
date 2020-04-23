@@ -6,11 +6,11 @@
 #
 # Setup -------------------------------------------------------------------
 
-library(lattice)
+# library(lattice)
 library(igraph)
-library(tm)
+# library(tm)
 library(twitteR)
-library(rgexf)
+# library(rgexf)
 library(tidyverse)
 library(graphTweets)
 library(lubridate)
@@ -54,7 +54,7 @@ past_tweets <- map_df(files,
 # Obtener tweets de COVID-19 de hoy
 tweets <-
   searchTwitter("#Covid-19",
-                n = 3000,
+                n = 5000,
                 lang = "es",
                 geocode = "-33.4569397,-70.6482697,22km")
 
