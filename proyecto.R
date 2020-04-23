@@ -47,8 +47,8 @@ past_tweets <- map_df(files,
                         retweetCount = col_double(),
                         isRetweet = col_logical(),
                         retweeted = col_logical(),
-                        longitude = col_character(),
-                        latitude = col_character()
+                        longitude = col_double(),
+                        latitude = col_double()
                       ))
 
 # Obtener tweets de COVID-19 de hoy
@@ -66,13 +66,18 @@ present_tweets %>%
   write_csv(paste0("data/", str_remove_all(today(), "-"), "_covid19.csv"),
             na = "")
 
+present_tweets <- present_tweets %>% 
+  mutate(longitude = as.double(longitude),
+         latitude = as.double(latitude))
+
 # Join past y present tweets
 tw_df <- full_join(past_tweets, present_tweets)
 
 # Cada tweet es una arista, dirigida quien es el RT ej: @user #Covid-19
-edges <-
+# as.data.frame() porque dplyr::ful_join convierte el df en tibble
+edges <- tw_df %>%
+  as.data.frame() %>%
   getEdges(
-    tw_df,
     "text",
     "screenName",
     str.length = NULL,
@@ -98,5 +103,5 @@ nodes <-
 graph <- graph.data.frame(edges[, 1:2], directed = TRUE, vertices = nodes)
 
 # Guardar grafo
-write.graph(graph, "entrega1.graphml", format = "graphml")
+write.graph(graph, paste0("graph/", str_remove_all(today(), "-"), "_graph.graphml"), format = "graphml")
 
